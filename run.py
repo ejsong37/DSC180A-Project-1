@@ -30,7 +30,7 @@ if fname == 'test':
     df2 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=2)
     #ubc
     df3 = a.simulationN_standard(mu2,n=10,num_sim=10,gaussian=True)
-    df4 = a.imulationN_asymptotic(mu2,n=10,num_sim=10,gaussian=True)
+    df4 = a.simulationN_asymptotic(mu2,n=10,num_sim=10,gaussian=True)
     df5 = a.simulationN_moss(mu2,n=10,num_sim=10,gaussian=True)
     df6 = a.simulationN_KL(mu2,n=10,num_sim=10,gaussian=True)
     #thompson
@@ -54,7 +54,7 @@ else:
     df2 = a.simulationN_ETC(mu2,m,n=1000,num_sim=1000,gaussian=2)
     #ubc
     df3 = a.simulationN_standard(mu2)
-    df4 = a.imulationN_asymptotic(mu2)
+    df4 = a.simulationN_asymptotic(mu2)
     df5 = a.simulationN_moss(mu2)
     df6 = a.simulationN_KL(mu2)
     #thompson
