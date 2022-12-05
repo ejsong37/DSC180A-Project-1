@@ -1,16 +1,13 @@
 import numpy as np
-from math import ceil,log,log10,sqrt
-import scipy.stats as st
-import scipy.optimize as opt
 import pandas as pd
-from time import sleep
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-
 
 #  Stochastic Bandits 
 
 # ETC
+# a: the arm we choose to pull
+# mu2: the true value of the mean for arm 2
 # a: the arm we choose to pull
 # mu2: the true value of the mean for arm 2
 def pullGaussian1(a,mu2):
@@ -71,7 +68,6 @@ def ETC(m,n,mu2,comment=False,gaussian=1):
         print("total regret:" + str(total_regret))
         print("best arm true mean:" + str(true_mean[best_arm-1]))
         print("\n")
-    
     
     return total_regret
 
@@ -168,6 +164,8 @@ def simulationN_KL(mu2,n=1000,num_sim=1000,gaussian=True):
     df['var'] = var_lst
     return df
 
+# UCB Algorithms
+
 def UCB_standard(n,mu2,gaussian=1):
     if mu2 == 0:
         return 0
@@ -180,7 +178,7 @@ def UCB_standard(n,mu2,gaussian=1):
     optimal = 0 if mu2 < 0 else 1
     
     while(t < n):
-        ucb = [np.mean(rewards1) + np.sqrt(2*log(n**2)/ti[0]),np.mean(rewards2) + np.sqrt(2*log(n**2)/ti[1])]
+        ucb = [np.mean(rewards1) + np.sqrt(2*np.log(n**2)/ti[0]),np.mean(rewards2) + np.sqrt(2*np.log(n**2)/ti[1])]
         argmax = np.argmax(ucb)
         reward = [pullGaussian(0),pullGaussian(mu2)] if gaussian else [pullBernoulli(0),pullBernoulli(mu2)]
         
@@ -238,7 +236,7 @@ def UCB_moss(n,mu2,gaussian=1):
     
     while(t < n):
         if t != 1:
-            ft = 1 + t*log(t)*log(t)
+            ft = 1 + t*np.log(t)*np.log(t)
             
         ucb = [np.mean(rewards1) + np.sqrt((4/ti[0])*log_plus(n,ti[0])),np.mean(rewards2) + np.sqrt((4/ti[1])*log_plus(n,ti[1]))]
         argmax = np.argmax(ucb)
@@ -257,47 +255,35 @@ def UCB_moss(n,mu2,gaussian=1):
 def d(p,q):
     if (p == 0):
         if (q < 1 and q > 0):
-            return log(1/(1-q))
+            return np.log(1/(1-q))
         else:
             return 0
     if (p == 1):
         if (q < 1 and q > 0):
-            return log(1/q)
+            return np.log(1/q)
         else:
             return 1
-    return p*log(p/q) + (1-p)*log((1-p)/(1-q))
+    return p*np.log(p/q) + (1-p)*np.log((1-p)/(1-q))
 
 def calculate_ucb(p,t,ti):
-    ft = 1 + t*(log(log(t)))
-    upper_bound = log(ft) / ti
-    #bounds = [0,1]
-    l = p
-    r = np.array([1,1])
+    ft = 1 + t*(np.log(np.log(t)))
+    upper_bound = np.log(ft) / ti
+    bounds = [p,1]
     for i in range(10):
-        q = (l + r) / 2
-        ndx = (np.where(p > 0, p * np.log(p / q), 0) +
-             np.where(p < 1, (1 - p) * np.log((1 - p) / (1 - q)), 0)) < upper_bound
-        l[ndx] = q[ndx]
-        r[~ndx] = q[~ndx]
-        #half = (sum(bounds)) / 2
-        #if bounds[1]-bounds[0] < 1e-5:
-            # early stopping
-        #    break
+       
+        half = (sum(bounds)) / 2
+        if bounds[1]-bounds[0] < 1e-5:
+             #early stopping
+            break
         
-        
-        #entropy = d(p,half)
-        
-        #if (d(p,half) + d)
-        #    bounds[0] = d(p,half) if p > 0 else 0
-        #    bounds[1] = d(1-p,1-half) if p < 1 else 0
+        entropy = d(p,half)
 
-        #if entropy < upper_bound:
-        #    bounds[0] = half
-        #@else:
-        #    bounds[1] = half
-    #print(p)
-    #print(half)
-    return q
+        if entropy < upper_bound:
+            bounds[0] = half
+        else:
+            bounds[1] = half
+
+    return half
 
 def UCB_KL(n,mu2,gaussian=1):
     if mu2 == 0.5:
@@ -311,8 +297,9 @@ def UCB_KL(n,mu2,gaussian=1):
     optimal = 0 if mu2 < 0.5 else 1
     
     while(t < n): 
-        ucb = calculate_ucb(np.array([np.mean(rewards1),np.mean(rewards2)]),t,ti[0])
-        #print(ucb)
+        #ucb = calculate_ucb(np.array([np.mean(rewards1),np.mean(rewards2)]),t,ti[0])
+        ucb = [calculate_ucb(np.mean(rewards1),t,ti[0]),calculate_ucb(np.mean(rewards2),t,ti[1])]
+        print(ucb)
         argmax = np.argmax(ucb)
         
         reward = [pullBernoulli(0.5),pullBernoulli(mu2)]
@@ -326,3 +313,244 @@ def UCB_KL(n,mu2,gaussian=1):
         regret += 0 if optimal == argmax else abs(mu2-0.5)
     
     return regret
+
+# Thompson Sampling
+
+def simulationN_TS1(mu2,p1,p2,n=1000,num_sim=1000):
+    point_lst = []
+    var_lst = []
+    for i in tqdm(mu2):
+        simulation = [thompson_sampling_gaussian(n=n,mu2=i,p1=p1,p2=p2) for a in range(num_sim)]
+        point = np.mean(simulation)
+        print(point)
+        var = np.var(simulation)
+        point_lst += [point]
+        var_lst += [var]
+    df = pd.DataFrame()
+    df['mu2'] = mu2
+    df['regret'] = point_lst
+    df['var'] = var_lst
+    return df
+
+def simulation_TS2(mu2,p1,p2,n=1000,num_sim=1000):
+    point_lst = []
+    var_lst = []
+    for i in tqdm(mu2):
+        simulation = [thompson_sampling_bernoulli(n=n,mu2=i,p1=p1,p2=p2) for a in range(num_sim)]
+        point = np.mean(simulation)
+        print(point)
+        var = np.var(simulation)
+        point_lst += [point]
+        var_lst += [var]
+    df = pd.DataFrame()
+    df['mu2'] = mu2
+    df['regret'] = point_lst
+    df['var'] = var_lst
+    return df
+
+def calculate_regret(n,opt_mu,mus):
+    rn = n*opt_mu - sum(mus)
+    
+def calculate_posterior_value_gaussian(x,sigma,mup,sigmap,n):
+    # x is the observed sample mean
+    # sigma is the signal std
+    # mup is the mean of the prior
+    # sigmap is the std of the prior
+    # n is the number of simulated values to get
+    mean = ((mup / (sigmap)**2) + (np.mean(x)/(sigma)**2)) / ((1/(sigmap)**2) + (1/(sigma)**2))
+    std = ((1/(sigmap)**2) + (1/(sigma)**2))**(-1)
+    #std = 1/((1/(sigmap)**2) + n)
+    #mean = std*sum(x)
+    return [mean,std**(0.5)]
+
+def pullGaussian(mu,sigma):
+        return np.random.normal(mu,sigma)
+    
+def thompson_sampling_gaussian(n,mu2,p1,p2):
+    # n is the horizon (number of iterations)
+    # mu2 is the true mean of bandit 2
+    # p1 is the prior distribution for bandit 1
+    # p2 is the prior distriubtion for bandit 2
+    t = 1
+    regret = 0
+    rewards1 = []
+    rewards2 = []
+    visits = [0,0]
+    dist1 = p1
+    dist2 = p2
+    if mu2 > 0: 
+        opt_mu = mu2
+    else:
+        opt_mu = 0
+    
+    while(t < n):
+        
+        # Sampling v_{t}
+        sim1 = np.random.normal(dist1[0],dist1[1])
+        sim2 = np.random.normal(dist2[0],dist2[1])
+
+        # Choosing At
+        arm = np.argmax([sim1,sim2])
+        
+        # pull reward and update distribution
+        if arm == 0: # Choose arm 1
+            reward = pullGaussian(0,1)
+            rewards1 += [reward]
+            regret += abs((opt_mu - 0))
+            visits[0] += 1
+            dist1 = calculate_posterior_value_gaussian(rewards1,1,dist1[0],dist1[1],visits[0])
+        else: # Choose arm 2
+            reward = pullGaussian(mu2,1)
+            rewards2 += [reward]
+            regret += abs(opt_mu-mu2)
+            visits[1] += 1
+            #print(dist2)
+            dist2 = calculate_posterior_value_gaussian(rewards2,1,dist2[0],dist2[1],visits[1])
+        t += 1
+    return regret
+
+def calculate_posterior_value_bernoulli(x,alpha,beta):
+    # x is the observed sample mean
+    # sigma is the signal std
+    # mup is the mean of the prior
+    # sigmap is the std of the prior
+    # n is the number of simulated values to get
+    return [alpha+np.mean(x),beta+1-np.mean(x)]
+
+def pullBernoulli(p):
+        return np.random.binomial(1,p)
+    
+def thompson_sampling_bernoulli(n,mu2,p1,p2):
+    # n is the horizon (number of iterations)
+    # mu2 is the true mean of bandit 2
+    # p1 is the prior distribution for bandit 1
+    # p2 is the prior distriubtion for bandit 2
+    t = 1
+    regret = 0
+    dist1 = p1
+    dist2 = p2
+    rewards1 = []
+    rewards2 = []
+    visits = [0,0]
+    if mu2 > 0: 
+        opt_mu = mu2
+    else:
+        opt_mu = 0.5
+    
+    while(t < n):
+        
+        # Sampling v_{t}
+        sim1 = np.random.beta(dist1[0],dist1[1])
+        sim2 = np.random.beta(dist2[0],dist2[1])
+
+        # Choosing At
+        arm = np.argmax([sim1,sim2])
+        
+        
+        # pull reward and update distribution
+        if arm == 0: # Choose arm 1
+            reward = pullBernoulli(dist1[0] / (dist1[0] + dist1[1]))
+            regret += abs((opt_mu - 0.5))
+            rewards1 += [reward]
+            dist1 = calculate_posterior_value_bernoulli(rewards1,dist1[0],dist1[1])
+        else: # Choose arm 2
+            reward = pullBernoulli(dist2[0] / (dist2[0] + dist2[1]))
+            regret += abs(opt_mu-mu2)
+            rewards2 += [reward]
+            dist1 = calculate_posterior_value_bernoulli(rewards2,dist2[0],dist2[1])
+        t += 1
+    return regret
+
+# Linear Bandits
+
+def UCB_Linear(a,n,theta,lamb=0.1):
+    delta = 1/n
+    mu_hat = 0
+    theta_hat = 0
+    ti = [0,0]
+    rewards1 = []
+    rewards2 = []
+    t = 1
+    regret = 0
+    V = lamb
+    at = [a[0]*theta,a[1]*theta]
+    optimal = a[np.argmax(at)]
+    while(t < n): 
+        beta = np.sqrt(lamb) + np.sqrt(2*np.log(1/delta) + np.log((1+(t-1))/delta))
+        a_hat = [0,0]
+        for i in range(2):
+            a_hat[i] = a[i]*theta_hat + beta*np.sqrt(a[i]**(2)/lamb)
+        argmax = np.argmax(a_hat)
+        reward = theta*a[argmax] + np.random.normal(0,1)
+        V = V + a[argmax]**2
+        
+        mu_hat = mu_hat + reward*a[argmax]
+        theta_hat = mu_hat / V
+        ti[argmax] += 1
+        t+=1
+        regret_t = 0 if a[argmax] == optimal else (optimal-a[argmax])*theta
+        regret+= regret_t
+    
+    return regret
+
+def simulationN_LinUCB(a,theta,n=1000,num_sim=1000):
+    point_lst = []
+    var_lst = []
+    df = pd.DataFrame()
+    for t in tqdm(theta):
+        simulation = [UCB_Linear(a,n,t) for b in range(num_sim)]
+        point = np.mean(simulation)
+        var = np.var(simulation)
+        print(point)
+        point_lst += [point]
+        var_lst += [var]
+    df['point'] = point_lst
+    df['var'] = var_lst
+    return df
+
+def simulationN_TSLin(a,theta,n=1000,num_sim=1000):
+    point_lst = []
+    var_lst = []
+    df = pd.DataFrame()
+    for t in tqdm(theta):
+        simulation = [thompsonSampling_linear(a,n,t) for b in range(num_sim)]
+        point = np.mean(simulation)
+        var = np.var(simulation)
+        print(point)
+        point_lst += [point]
+        var_lst += [var]
+    df['point'] = point_lst
+    df['var'] = var_lst
+    return df
+
+def thompsonSampling_linear(a,n,theta):
+    mu_t = 0
+    sigma_t = 1
+    regret = 0
+    at = [a[0]*theta,a[1]*theta]
+    optimal = a[np.argmax(at)]
+    choose = [0,0]
+    #print(optimal)
+    
+    for i in range(n):
+        theta_hat = np.random.normal(mu_t, sigma_t)
+        #print(theta_hat)
+        X_t = [a[0]*theta_hat,a[1]*theta_hat]
+        action = np.argmax(X_t)
+        #print([action])
+        #print(optimal)
+        regret_t = 0 if a[action] == optimal else (a[action]-optimal)*theta
+        #print(regret_t)
+        regret += regret_t
+        choose[action]+=1
+        
+        reward = theta*a[action] + np.random.normal(0,1) # noise
+        sigma_t1 = sigma_t / ((X_t[action]**(2))*sigma_t + 1)
+        mu_t1 = sigma_t1*(mu_t/sigma_t + X_t[action]*reward)
+        mu_t = mu_t1
+        sigma_t = sigma_t1
+    #print(mu_t)
+    #print(sigma_t)
+    #print(choose)
+    return regret
+
