@@ -391,13 +391,13 @@ def thompson_sampling_gaussian(n,mu2,p1,p2):
         
         # pull reward and update distribution
         if arm == 0: # Choose arm 1
-            reward = pullGaussian(0,1)
+            reward = pullGaussian(0)
             rewards1 += [reward]
             regret += abs((opt_mu - 0))
             visits[0] += 1
             dist1 = calculate_posterior_value_gaussian(rewards1,1,dist1[0],dist1[1],visits[0])
         else: # Choose arm 2
-            reward = pullGaussian(mu2,1)
+            reward = pullGaussian(mu2)
             rewards2 += [reward]
             regret += abs(opt_mu-mu2)
             visits[1] += 1
