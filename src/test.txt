@@ -1,0 +1,1 @@
+a.simulationN_moss(mu2,n=1,num_sim=10,gaussian=True)

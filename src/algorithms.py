@@ -413,9 +413,6 @@ def calculate_posterior_value_bernoulli(x,alpha,beta):
     # sigmap is the std of the prior
     # n is the number of simulated values to get
     return [alpha+np.mean(x),beta+1-np.mean(x)]
-
-def pullBernoulli(p):
-        return np.random.binomial(1,p)
     
 def thompson_sampling_bernoulli(n,mu2,p1,p2):
     # n is the horizon (number of iterations)
