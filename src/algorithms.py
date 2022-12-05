@@ -362,9 +362,6 @@ def calculate_posterior_value_gaussian(x,sigma,mup,sigmap,n):
     #std = 1/((1/(sigmap)**2) + n)
     #mean = std*sum(x)
     return [mean,std**(0.5)]
-
-def pullGaussian(mu,sigma):
-        return np.random.normal(mu,sigma)
     
 def thompson_sampling_gaussian(n,mu2,p1,p2):
     # n is the horizon (number of iterations)
@@ -553,4 +550,80 @@ def thompsonSampling_linear(a,n,theta):
     #print(sigma_t)
     #print(choose)
     return regret
+
+def calculate_posterior_value_bernoulli(x,alpha,beta):
+    # x is the observed sample mean
+    # sigma is the signal std
+    # mup is the mean of the prior
+    # sigmap is the std of the prior
+    # n is the number of simulated values to get
+    return [alpha+np.mean(x),beta+1-np.mean(x)]
+
+def psq(alpha,beta,s,q):
+    return (alpha+s) / (alpha + beta + q)
+
+def wt(alpha,beta,s,q,t,n):
+    if t == n:
+        return psq(alpha,beta,s,q)
+        
+    return psq(alpha,beta,s,q)*(1+wt(alpha,beta,s+1,q+1,t+1,n)) + (1-psq(alpha,beta,s,q))*wt(alpha,beta,s,q+1,t+1,n)
+
+def wt2(t,n):
+    if t == n:
+        return 0.5
+    return 0.5+wt2(t+1,n)
+
+# Bayesian optimal Polciy
+def bayesian_optimal_policy(n,mu1,p1):
+    # n is the horizon (number of iterations)
+    # mu2 is the true mean of bandit 2
+    # p1 is the prior distribution for bandit 1
+    # p2 is the prior distriubtion for bandit 2
+    wt1 = [0]
+    rewards1 = []
+    regret = 0
+    rewards2 = []
+    visits = [0,0]
+    dist1 = p1
+    opt_mu = mu1 if mu1 > 0.5 else 0.5
+    for t in range(n,0,-1): 
+        w1 = 0
+        w2 = 0
+        for i in range(t):
+            w1 = wt(dist1[0],dist1[1],i,i,t,n)
+            w2 = wt2(t,n)
+        
+            arm = np.argmax([w1,w2])
+
+            if arm == 0:
+                reward = pullBernoulli(mu1)
+                rewards1 += [reward]
+                regret += abs((opt_mu-mu1))
+                visits[0] += 1
+                dist1 = calculate_posterior_value_bernoulli(rewards1,dist1[0],dist1[1])
+
+            else:
+                reward = 0.5
+                rewards2 += [reward]
+                regret += abs(opt_mu-0.5)
+                visits[1] += 1
+    
+        
+    return regret
+
+def simulationN_BOP(mu1,p1,n=20,num_sim=1000):
+    point_lst = []
+    var_lst = []
+    for i in tqdm(mu1):
+        simulation = [bayesian_optimal_policy(n=n,mu1=i,p1=p1) for a in range(num_sim)]
+        point = np.mean(simulation)
+        #print(point)
+        var = np.var(simulation)
+        point_lst += [point]
+        var_lst += [var]
+    df = pd.DataFrame()
+    df['mu1'] = mu1
+    df['regret'] = point_lst
+    df['var'] = var_lst
+    return df
 
