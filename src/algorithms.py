@@ -299,7 +299,6 @@ def UCB_KL(n,mu2,gaussian=1):
     while(t < n): 
         #ucb = calculate_ucb(np.array([np.mean(rewards1),np.mean(rewards2)]),t,ti[0])
         ucb = [calculate_ucb(np.mean(rewards1),t,ti[0]),calculate_ucb(np.mean(rewards2),t,ti[1])]
-        print(ucb)
         argmax = np.argmax(ucb)
         
         reward = [pullBernoulli(0.5),pullBernoulli(mu2)]
@@ -322,7 +321,6 @@ def simulationN_TS1(mu2,p1,p2,n=1000,num_sim=1000):
     for i in tqdm(mu2):
         simulation = [thompson_sampling_gaussian(n=n,mu2=i,p1=p1,p2=p2) for a in range(num_sim)]
         point = np.mean(simulation)
-        print(point)
         var = np.var(simulation)
         point_lst += [point]
         var_lst += [var]
@@ -338,7 +336,6 @@ def simulation_TS2(mu2,p1,p2,n=1000,num_sim=1000):
     for i in tqdm(mu2):
         simulation = [thompson_sampling_bernoulli(n=n,mu2=i,p1=p1,p2=p2) for a in range(num_sim)]
         point = np.mean(simulation)
-        print(point)
         var = np.var(simulation)
         point_lst += [point]
         var_lst += [var]
@@ -401,7 +398,6 @@ def thompson_sampling_gaussian(n,mu2,p1,p2):
             rewards2 += [reward]
             regret += abs(opt_mu-mu2)
             visits[1] += 1
-            #print(dist2)
             dist2 = calculate_posterior_value_gaussian(rewards2,1,dist2[0],dist2[1],visits[1])
         t += 1
     return regret
@@ -495,7 +491,6 @@ def simulationN_LinUCB(a,theta,n=1000,num_sim=1000):
         simulation = [UCB_Linear(a,n,t) for b in range(num_sim)]
         point = np.mean(simulation)
         var = np.var(simulation)
-        print(point)
         point_lst += [point]
         var_lst += [var]
     df['point'] = point_lst
@@ -510,7 +505,6 @@ def simulationN_TSLin(a,theta,n=1000,num_sim=1000):
         simulation = [thompsonSampling_linear(a,n,t) for b in range(num_sim)]
         point = np.mean(simulation)
         var = np.var(simulation)
-        print(point)
         point_lst += [point]
         var_lst += [var]
     df['point'] = point_lst
@@ -524,17 +518,12 @@ def thompsonSampling_linear(a,n,theta):
     at = [a[0]*theta,a[1]*theta]
     optimal = a[np.argmax(at)]
     choose = [0,0]
-    #print(optimal)
     
     for i in range(n):
         theta_hat = np.random.normal(mu_t, sigma_t)
-        #print(theta_hat)
         X_t = [a[0]*theta_hat,a[1]*theta_hat]
         action = np.argmax(X_t)
-        #print([action])
-        #print(optimal)
         regret_t = 0 if a[action] == optimal else (a[action]-optimal)*theta
-        #print(regret_t)
         regret += regret_t
         choose[action]+=1
         
@@ -543,9 +532,6 @@ def thompsonSampling_linear(a,n,theta):
         mu_t1 = sigma_t1*(mu_t/sigma_t + X_t[action]*reward)
         mu_t = mu_t1
         sigma_t = sigma_t1
-    #print(mu_t)
-    #print(sigma_t)
-    #print(choose)
     return regret
 
 def calculate_posterior_value_bernoulli(x,alpha,beta):
@@ -614,7 +600,6 @@ def simulationN_BOP(mu1,p1,n=20,num_sim=1000):
     for i in tqdm(mu1):
         simulation = [bayesian_optimal_policy(n=n,mu1=i,p1=p1) for a in range(num_sim)]
         point = np.mean(simulation)
-        #print(point)
         var = np.var(simulation)
         point_lst += [point]
         var_lst += [var]
