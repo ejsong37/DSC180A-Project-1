@@ -72,17 +72,17 @@ else:
     p1 = [1,1]
     df11 = a.simulationN_BOP(mu2,p1)
 
-df1.to_csv(os.path.join(cwd, 'output1.csv'),index=False)
-df2.to_csv(os.path.join(cwd, 'output2.csv'),index=False)
-df3.to_csv(os.path.join(cwd, 'output3.csv'),index=False)
-df4.to_csv(os.path.join(cwd, 'output4.csv'),index=False)
-df5.to_csv(os.path.join(cwd, 'output5.csv'),index=False)
-df6.to_csv(os.path.join(cwd, 'output6.csv'),index=False)
-df7.to_csv(os.path.join(cwd, 'output7.csv'),index=False)
-df8.to_csv(os.path.join(cwd, 'output8.csv'),index=False)
-df9.to_csv(os.path.join(cwd, 'output9.csv'),index=False)
-df10.to_csv(os.path.join(cwd, 'output10.csv'),index=False)
-df11.to_csv(os.path.join(cwd, 'output11.csv'),index=False)
+df1.to_csv(os.path.join(out, 'output1.csv'),index=False)
+df2.to_csv(os.path.join(out, 'output2.csv'),index=False)
+df3.to_csv(os.path.join(out, 'output3.csv'),index=False)
+df4.to_csv(os.path.join(out, 'output4.csv'),index=False)
+df5.to_csv(os.path.join(out, 'output5.csv'),index=False)
+df6.to_csv(os.path.join(out, 'output6.csv'),index=False)
+df7.to_csv(os.path.join(out, 'output7.csv'),index=False)
+df8.to_csv(os.path.join(out, 'output8.csv'),index=False)
+df9.to_csv(os.path.join(out, 'output9.csv'),index=False)
+df10.to_csv(os.path.join(out, 'output10.csv'),index=False)
+df11.to_csv(os.path.join(out, 'output11.csv'),index=False)
 
 
 
