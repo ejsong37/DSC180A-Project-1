@@ -422,7 +422,7 @@ def thompson_sampling_bernoulli(n,mu2,p1,p2):
     rewards1 = []
     rewards2 = []
     visits = [0,0]
-    if mu2 > 0: 
+    if mu2 > 0.5: 
         opt_mu = mu2
     else:
         opt_mu = 0.5
