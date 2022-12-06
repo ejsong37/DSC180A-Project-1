@@ -12,7 +12,6 @@ import os
 # Gets current working directory
 cwd = os.getcwd()
 out = os.path.join(cwd, 'output')
-st = '/Users/erics/UCSD/DSC180A/DSC180A-Project-1/output1.csv'
 # Inserts file path of algorithms.py and imports models
 sys.path.insert(0, cwd + '/src')
 import algorithms as a
@@ -27,11 +26,13 @@ if fname == 'test':
     out = os.path.join(cwd, 'test')
     #etc
     df1 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=1)
-    df2 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=2)
+    df2 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=False)
     #ubc
     df3 = a.simulationN_standard(mu2,n=10,num_sim=10,gaussian=True)
+    df12 = a.simulationN_standard(mu2,n=10,num_sim=10,gaussian=False)
     df4 = a.simulationN_asymptotic(mu2,n=10,num_sim=10,gaussian=True)
     df5 = a.simulationN_moss(mu2,n=10,num_sim=10,gaussian=True)
+    df13 = a.simulationN_moss(mu2,n=10,num_sim=10,gaussian=False)
     df6 = a.simulationN_KL(mu2,n=10,num_sim=10,gaussian=True)
     #thompson
     p1 = [0,1]
@@ -51,11 +52,13 @@ if fname == 'test':
 else:
     #etc
     df1 = a.simulationN_ETC(mu2,m,n=1000,num_sim=1000,gaussian=1)
-    df2 = a.simulationN_ETC(mu2,m,n=1000,num_sim=1000,gaussian=2)
+    df2 = a.simulationN_ETC(mu2,m,n=1000,num_sim=1000,gaussian=False)
     #ubc
     df3 = a.simulationN_standard(mu2)
+    df12 = a.simulationN_standard(mu2,gaussian=False)
     df4 = a.simulationN_asymptotic(mu2)
     df5 = a.simulationN_moss(mu2)
+    df13 = a.simulationN_standard(mu2,gaussian=False)
     df6 = a.simulationN_KL(mu2)
     #thompson
     p1 = [0,1]
@@ -83,6 +86,8 @@ df8.to_csv(os.path.join(out, 'output8.csv'),index=False)
 df9.to_csv(os.path.join(out, 'output9.csv'),index=False)
 df10.to_csv(os.path.join(out, 'output10.csv'),index=False)
 df11.to_csv(os.path.join(out, 'output11.csv'),index=False)
+df12.to_csv(os.path.join(out, 'output12.csv'),index=False)
+df12.to_csv(os.path.join(out, 'output13.csv'),index=False)
 
 
 
