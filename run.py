@@ -11,10 +11,10 @@ import os
 
 # Gets current working directory
 cwd = os.getcwd()
-out = cwd + '/output'
+out = os.path.join(cwd, 'output')
 st = '/Users/erics/UCSD/DSC180A/DSC180A-Project-1/output1.csv'
 # Inserts file path of algorithms.py and imports models
-sys.path.insert(0, cwd+ '/src')
+sys.path.insert(0, cwd + '/src')
 import algorithms as a
 
 # Arguments from command prompt
@@ -24,7 +24,7 @@ m = [25,50,75,100,1000]
 mu2 = [0.01*x for x in range(0,101)]
 theta = []
 if fname == 'test':
-    out = cwd + '/test'
+    out = os.path.join(cwd, 'test')
     #etc
     df1 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=1)
     df2 = a.simulationN_ETC(mu2,m,n=10,num_sim=10,gaussian=2)
@@ -72,17 +72,18 @@ else:
     p1 = [1,1]
     df11 = a.simulationN_BOP(mu2,p1)
 
-df1.to_csv(out +'/output1.csv',index=False)
-df2.to_csv(out+'/output2.csv',index=False)
-df3.to_csv(out+'/output3.csv',index=False)
-df4.to_csv(out+'/output4.csv',index=False)
-df5.to_csv(out+'/output5.csv',index=False)
-df6.to_csv(out+'/output6.csv',index=False)
-df7.to_csv(out+'/output7.csv',index=False)
-df8.to_csv(out+'/output8.csv',index=False)
-df9.to_csv(out+'/output9.csv',index=False)
-df10.to_csv(out+'/output10.csv',index=False)
-df11.to_csv(out+'/output11.csv',index=False)
+df1.to_csv(os.path.join(cwd, 'output1.csv'),index=False)
+df2.to_csv(os.path.join(cwd, 'output2.csv'),index=False)
+df3.to_csv(os.path.join(cwd, 'output3.csv'),index=False)
+df4.to_csv(os.path.join(cwd, 'output4.csv'),index=False)
+df5.to_csv(os.path.join(cwd, 'output5.csv'),index=False)
+df6.to_csv(os.path.join(cwd, 'output6.csv'),index=False)
+df7.to_csv(os.path.join(cwd, 'output7.csv'),index=False)
+df8.to_csv(os.path.join(cwd, 'output8.csv'),index=False)
+df9.to_csv(os.path.join(cwd, 'output9.csv'),index=False)
+df10.to_csv(os.path.join(cwd, 'output10.csv'),index=False)
+df11.to_csv(os.path.join(cwd, 'output11.csv'),index=False)
+
 
 
 
