@@ -7,9 +7,9 @@ This repository contains the code used for the Data Science Project 1 (DSC-180A)
 
 <h2> <u> Contents </u> </h2>
 
-* [Notebooks](https://github.com/Krganapa/dsc180a/tree/master/notebooks)
+* [Notebooks](https://github.com/ejsong37/dsc180a/tree/master/notebooks)
 
-* [References](https://github.com/Krganapa/dsc180a/blob/master/references/master_list.txt)
+* [](https://github.com/ejsong/dsc180a/blob/master/references/master_list.txt)
 <h2> <u> Installation </u> </h2>
 
 Below are instructions to setup this project on your local machine using a Anaconda or miniconda environment. Please ensure that you have installed `git` on your machine beforehand. Further instructions can be found [here](https://git-scm.com/).
