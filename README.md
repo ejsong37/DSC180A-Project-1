@@ -8,14 +8,14 @@ This repository contains the code used for the Data Science Project 1 (DSC-180A)
 
 Below are instructions to setup this project on your local machine using a Anaconda or miniconda environment. Please ensure that you have installed `git` on your machine beforehand. Further instructions can be found [here](https://git-scm.com/).
 
-**Note: These instructions assume that the directory (`dsc199`) containing all the files will be located in the path `C:\Users\<username>`. Feel free to change where you store your files, but ensure that you are in the same directory for every step.**
+**Note: These instructions assume that the directory (`dsc180a`) containing all the files will be located in the path `C:\Users\<username>`. Feel free to change where you store your files, but ensure that you are in the same directory for every step.**
 
 **1. Clone this project to your local machine.**
 
 Fork the repository into your own GitHub account (a ```fork``` is a copy of the repository), and run the following on the Anaconda/miniconda prompt:
 
 ```
-git clone https://github.com/<your-user-name>/dsc199.git
+git clone https://github.com/<your-user-name>/dsc180a.git
 ```
 
 You may be asked to enter your GitHub credentials.
@@ -25,14 +25,14 @@ You may be asked to enter your GitHub credentials.
 Using a [conda](https://docs.conda.io/en/latest/) environment will help manage modules/dependencies and isolate working environments. The file ```requirements.txt``` specifies the Python version and required libraries.
 
 ```
-cd dsc199
-conda create --name dsc199 python=3.7
+cd dsc180a
+conda create --name dsc180a python=3.7
 ```
 
 Once the environment is created, activate it in the Anaconda/miniconda console.
 
 ```
-conda activate dsc199
+conda activate dsc180a
 ```
 
 **3. Install modules.**
@@ -62,13 +62,12 @@ On `Notepad`, write the following script:
 ```
 echo off
 
-CALL C:\Users\<username>\miniconda3\Scripts\activate.bat C:\Users\<username>\miniconda3\envs\dsc199
-CD /D C:\Users\<username>\dsc199
+CALL C:\Users\<username>\miniconda3\Scripts\activate.bat C:\Users\<username>\miniconda3\envs\dsc180a
+CD /D C:\Users\<username>\dsc180a
 jupyter notebook
 
 echo on
 ```
-Save the file as `dsc199.bat`. This script will automatically open a browser with **Jupyter Notebook** access.
+Save the file as `dsc180a.bat`. This script will automatically open a browser with **Jupyter Notebook** access.
 
 <hr>
-Content will be updated as weeks roll by!
