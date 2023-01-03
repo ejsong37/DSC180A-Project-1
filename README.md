@@ -7,9 +7,9 @@ This repository contains the code used for the Data Science Project 1 (DSC-180A)
 
 <h2> <u> Contents </u> </h2>
 
-* [Notebooks](https://github.com/Krganapa/dsc199/tree/master/notebooks)
+* [Notebooks](https://github.com/Krganapa/dsc180a/tree/master/notebooks)
 
-* [References](https://github.com/Krganapa/dsc199/blob/master/references/master_list.txt)
+* [References](https://github.com/Krganapa/dsc180a/blob/master/references/master_list.txt)
 <h2> <u> Installation </u> </h2>
 
 Below are instructions to setup this project on your local machine using a Anaconda or miniconda environment. Please ensure that you have installed `git` on your machine beforehand. Further instructions can be found [here](https://git-scm.com/).
@@ -43,7 +43,7 @@ conda activate dsc180a
 
 **3. Install modules.**
 
-Using the `requirements.txt` file located in the `dsc199` directory, install **Jupyter Notebook** and the required libraries using `pip` or `conda`.
+Using the `requirements.txt` file located in the `dsc180a` directory, install **Jupyter Notebook** and the required libraries using `pip` or `conda`.
 
 ```
 pip install -U jupyter
@@ -58,7 +58,7 @@ Once the environment is fully set-up, launch **Jupyter Notebook** in the console
 jupyter notebook
 ```
 
-This will open up a web-browser where you will access all of the files associated with `dsc199`.
+This will open up a web-browser where you will access all of the files associated with `dsc180a`.
 
 **For Windows users:**
 Alternatively, you can write a batch script to start-up the notebook instantly.
